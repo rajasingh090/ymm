@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block page %}home{% endblock %}
+{% block title %}Not found · {{ app_name }}{% endblock %}
+{% block content %}
+<section class="card reveal center">
+  <h2>404</h2>
+  <p class="muted">That page does not exist. Every valid route (/, /calendar, /history, /progress, /ai-coach, /settings) can be refreshed safely.</p>
+  <a class="btn primary" href="/">Back to dashboard</a>
+</section>
+{% endblock %}
