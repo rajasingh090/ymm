@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · {{ app_name }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+<main class="login-card card">
+  <h1>{{ app_name }}</h1>
+  <p class="muted small">Your workout records are private. Enter the app password to continue.</p>
+  <form method="post">
+    <label class="field"><span>Password</span><input type="password" name="password" autofocus required></label>
+    {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+    <button class="btn primary full" type="submit">Sign in</button>
+  </form>
+</main>
+</body>
+</html>
