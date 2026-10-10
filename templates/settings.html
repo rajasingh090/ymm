@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block page %}settings{% endblock %}
+{% block title %}Settings · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="card reveal">
+  <h2>Goals</h2>
+  <div class="grid-2">
+    <label class="field"><span>Weekly session goal</span><input type="number" min="0" max="14" id="s-weekly" value="{{ settings.weekly_goal }}"></label>
+    <label class="field"><span>Monthly session goal</span><input type="number" min="0" max="31" id="s-monthly" value="{{ settings.monthly_goal }}"></label>
+  </div>
+</section>
+
+<section class="card reveal">
+  <h2>Calendar</h2>
+  <label class="field"><span>Default calendar system</span>
+    <select id="s-calendar">
+      <option value="gregorian" {% if settings.calendar_system != 'hindu' %}selected{% endif %}>Gregorian</option>
+      <option value="hindu" {% if settings.calendar_system == 'hindu' %}selected{% endif %}>Hindu lunar</option>
+    </select>
+  </label>
+  <label class="field"><span>Hindu month convention</span>
+    <select id="s-convention">
+      <option value="amanta" {% if settings.hindu_convention != 'purnimanta' %}selected{% endif %}>Amanta (ends at new moon)</option>
+      <option value="purnimanta" {% if settings.hindu_convention == 'purnimanta' %}selected{% endif %}>Purnimanta (ends at full moon)</option>
+    </select>
+  </label>
+  <p class="muted small">
+    {% if hindu_available %}Conversion source: {{ hindu_method }}. Workouts are always stored with Gregorian dates.
+    {% else %}Hindu conversion is not configured — the Gregorian calendar is used.{% endif %}
+  </p>
+</section>
+
+<section class="card reveal">
+  <h2>Custom workout splits</h2>
+  <div id="splits-list" class="stack"></div>
+  <div class="grid-2">
+    <label class="field"><span>Split name</span><input id="split-name" placeholder="Push"></label>
+    <label class="field"><span>Muscles (comma separated)</span><input id="split-muscles" placeholder="Chest, Shoulders, Triceps"></label>
+  </div>
+  <button class="btn ghost full" id="add-split"><i data-lucide="plus"></i> Add split</button>
+</section>
+
+<section class="card reveal">
+  <h2>Units</h2>
+  <label class="field"><span>Weight unit</span>
+    <select id="s-unit">
+      <option value="kg" {% if settings.weight_unit != 'lb' %}selected{% endif %}>Kilograms</option>
+      <option value="lb" {% if settings.weight_unit == 'lb' %}selected{% endif %}>Pounds</option>
+    </select>
+  </label>
+  <button class="btn primary full" id="save-settings"><i data-lucide="check"></i> Save settings</button>
+</section>
+
+<section class="card reveal">
+  <h2>Data</h2>
+  <div class="row-wrap">
+    <a class="btn ghost" href="/api/export?format=json"><i data-lucide="download"></i> Backup JSON</a>
+    <a class="btn ghost" href="/api/export?format=csv"><i data-lucide="file-down"></i> Export CSV</a>
+  </div>
+  <div id="quality" class="stack"></div>
+</section>
+
+<section class="card reveal">
+  <h2>System</h2>
+  <ul class="kv">
+    <li><span>Storage backend</span><b>{{ storage.backend }}</b></li>
+    <li><span>Storage location</span><b>{{ storage.location }}</b></li>
+    <li><span>Timezone</span><b>{{ timezone_name }}</b></li>
+    <li><span>AI narrative</span><b>{{ 'enabled' if ai_enabled else 'disabled' }}</b></li>
+    <li><span>Self-ping</span><b>{{ self_ping_status }}</b></li>
+    <li><span>Login protection</span><b>{{ 'enabled' if password_protected else 'disabled' }}</b></li>
+    <li><span>Health endpoint</span><b><a class="link" href="/health">/health</a></b></li>
+  </ul>
+  <p class="muted small">
+    Self-pinging is an optional monitoring mechanism only. It does not guarantee that a free Render
+    service stays awake — Render may still sleep free instances, and traffic from the service itself
+    may not prevent that. Use an external monitor for real keep-alive behaviour.
+  </p>
+  {% if password_protected %}<a class="btn ghost full" href="/logout">Log out</a>{% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}" defer></script>
+{% endblock %}
