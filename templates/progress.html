@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block page %}progress{% endblock %}
+{% block title %}Progress · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="card reveal">
+  <h2>Progress analytics</h2>
+  <div class="segmented wrap" id="range-picker">
+    <button type="button" class="seg" data-value="7d">7d</button>
+    <button type="button" class="seg active" data-value="30d">30d</button>
+    <button type="button" class="seg" data-value="90d">90d</button>
+    <button type="button" class="seg" data-value="6m">6m</button>
+    <button type="button" class="seg" data-value="12m">12m</button>
+    <button type="button" class="seg" data-value="all">All</button>
+    <button type="button" class="seg" data-value="custom">Custom</button>
+  </div>
+  <div class="grid-2" id="custom-range" hidden>
+    <label class="field"><span>From</span><input type="date" id="r-start"></label>
+    <label class="field"><span>To</span><input type="date" id="r-end"></label>
+  </div>
+  <p class="muted small" id="range-info"></p>
+</section>
+
+<section class="card reveal"><h3>Weekly sessions</h3><div class="chart-wrap"><canvas id="c-weekly"></canvas></div></section>
+<section class="card reveal"><h3>Monthly attendance %</h3><div class="chart-wrap"><canvas id="c-monthly"></canvas></div></section>
+<section class="card reveal"><h3>Workout duration per day</h3><div class="chart-wrap"><canvas id="c-duration"></canvas></div></section>
+<section class="card reveal"><h3>Muscle group frequency</h3><div class="chart-wrap"><canvas id="c-muscles"></canvas></div></section>
+<section class="card reveal"><h3>Training volume per week (kg·reps)</h3><div class="chart-wrap"><canvas id="c-volume"></canvas></div></section>
+<section class="card reveal"><h3>Strength progression (top exercises)</h3><div class="chart-wrap"><canvas id="c-strength"></canvas></div>
+  <p class="muted small">Only exercises with recorded weights appear here.</p>
+</section>
+
+<section class="card reveal">
+  <h3>Muscle coverage</h3>
+  <div id="muscle-table"></div>
+</section>
+
+<section class="card reveal">
+  <h3>Body measurements (optional)</h3>
+  <form id="measure-form" class="grid-2">
+    <label class="field"><span>Date</span><input type="date" id="m-date" required></label>
+    <label class="field"><span>Body weight (kg)</span><input type="number" step="0.1" id="m-weight"></label>
+    <label class="field"><span>Chest (cm)</span><input type="number" step="0.1" id="m-chest"></label>
+    <label class="field"><span>Waist (cm)</span><input type="number" step="0.1" id="m-waist"></label>
+    <label class="field"><span>Arms (cm)</span><input type="number" step="0.1" id="m-arms"></label>
+    <label class="field"><span>Thighs (cm)</span><input type="number" step="0.1" id="m-thighs"></label>
+    <button class="btn primary full" type="submit">Save measurement</button>
+  </form>
+  <div id="measure-list" class="stack"></div>
+</section>
+
+<section class="card reveal">
+  <h3>Export &amp; backup</h3>
+  <div class="row-wrap">
+    <a class="btn ghost" href="/api/export?format=csv"><i data-lucide="file-down"></i> CSV</a>
+    <a class="btn ghost" href="/api/export?format=json"><i data-lucide="download"></i> JSON backup</a>
+    <label class="btn ghost"><i data-lucide="upload"></i> Restore<input type="file" id="restore-file" accept="application/json" hidden></label>
+  </div>
+  <p class="muted small">Restore replaces the current records with the backup file contents (inside one transaction).</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
+{% endblock %}
