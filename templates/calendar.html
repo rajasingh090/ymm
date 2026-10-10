@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block page %}calendar{% endblock %}
+{% block title %}Calendar · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="card reveal">
+  <div class="row-between">
+    <button class="icon-btn ghost" id="cal-prev" aria-label="Previous month"><i data-lucide="chevron-left"></i></button>
+    <div class="center">
+      <h2 id="cal-title">…</h2>
+      <p class="muted small" id="cal-subtitle"></p>
+    </div>
+    <button class="icon-btn ghost" id="cal-next" aria-label="Next month"><i data-lucide="chevron-right"></i></button>
+  </div>
+
+  <div class="segmented small-seg" id="cal-system">
+    <button type="button" class="seg {% if settings.calendar_system != 'hindu' %}active{% endif %}" data-value="gregorian">Gregorian</button>
+    <button type="button" class="seg {% if settings.calendar_system == 'hindu' %}active{% endif %}" data-value="hindu">Hindu lunar</button>
+  </div>
+
+  <div class="cal-weekdays"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+  <div class="cal-grid" id="cal-grid"></div>
+
+  <div class="legend">
+    <span><i class="dot went"></i> Went</span>
+    <span><i class="dot missed"></i> Missed</span>
+    <span><i class="dot rest"></i> Rest</span>
+    <span><i class="dot unrecorded"></i> Not recorded</span>
+  </div>
+  <p class="muted small" id="cal-note"></p>
+</section>
+
+<section class="card reveal" id="day-panel" hidden>
+  <div class="row-between"><h3 id="day-title">Day</h3><button class="icon-btn ghost" id="day-close" aria-label="Close"><i data-lucide="x"></i></button></div>
+  <p class="muted small" id="day-hindu"></p>
+  <div id="day-body"></div>
+  <button class="btn primary full" id="day-log"><i data-lucide="plus"></i> Log / edit this day</button>
+</section>
+
+<section class="card reveal">
+  <h3>Month summary</h3>
+  <div class="stat-grid tight" id="month-stats"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/calendar.js') }}" defer></script>
+{% endblock %}
