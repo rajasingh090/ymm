@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f10">
+<title>{% block title %}{{ app_name }}{% endblock %}</title>
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<link rel="icon" href="{{ url_for('static', filename='icons/icon.svg') }}" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon.svg') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js" defer></script>
+</head>
+<body data-page="{% block page %}home{% endblock %}">
+
+<header class="topbar">
+  <div class="brand">
+    <span class="pulse-dot"></span>
+    <div>
+      <h1>{{ app_name }}</h1>
+      <p class="muted small">{{ today_pretty }}{% if hindu %} &middot; {{ hindu.month }} {{ hindu.paksha }}{% endif %}</p>
+    </div>
+  </div>
+  <button class="icon-btn" id="quick-log" title="Log workout" aria-label="Log workout">
+    <i data-lucide="plus"></i>
+  </button>
+</header>
+
+<main class="page">
+  {% block content %}{% endblock %}
+</main>
+
+<nav class="bottom-nav" role="navigation">
+  <a href="/" class="nav-item {% if self.page()=='home' %}active{% endif %}"><i data-lucide="home"></i><span>Home</span></a>
+  <a href="/calendar" class="nav-item {% if self.page()=='calendar' %}active{% endif %}"><i data-lucide="calendar-days"></i><span>Calendar</span></a>
+  <a href="/history" class="nav-item {% if self.page()=='history' %}active{% endif %}"><i data-lucide="list"></i><span>History</span></a>
+  <a href="/progress" class="nav-item {% if self.page()=='progress' %}active{% endif %}"><i data-lucide="trending-up"></i><span>Progress</span></a>
+  <a href="/settings" class="nav-item {% if self.page()=='settings' %}active{% endif %}"><i data-lucide="settings"></i><span>Settings</span></a>
+</nav>
+
+<!-- ============ WORKOUT MODAL ============ -->
+<div class="modal-backdrop" id="workout-modal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Log workout">
+    <div class="modal-head">
+      <h2 id="modal-title">Log Today's Workout</h2>
+      <button class="icon-btn ghost" id="modal-close" aria-label="Close"><i data-lucide="x"></i></button>
+    </div>
+    <form id="workout-form" class="modal-body" autocomplete="off">
+      <input type="hidden" name="id" id="f-id">
+
+      <label class="field">
+        <span>Date</span>
+        <input type="date" id="f-date" name="date" required>
+      </label>
+
+      <div class="field">
+        <span>Attendance status</span>
+        <div class="segmented" id="f-status">
+          <button type="button" class="seg active" data-value="went">Went to gym</button>
+          <button type="button" class="seg" data-value="missed">Did not go</button>
+          <button type="button" class="seg" data-value="rest">Planned rest</button>
+        </div>
+      </div>
+
+      <div id="gym-fields">
+        <div class="field">
+          <span>Muscle groups trained</span>
+          <div class="chips" id="f-muscles">
+            {% for m in muscles %}<button type="button" class="chip" data-muscle="{{ m }}">{{ m }}</button>{% endfor %}
+          </div>
+          <p class="muted small">Pick any combination — usually two, but more is fine.</p>
+        </div>
+
+        <div class="grid-2">
+          <label class="field"><span>Start time</span><input type="time" id="f-start" name="start_time"></label>
+          <label class="field"><span>End time</span><input type="time" id="f-end" name="end_time"></label>
+        </div>
+        <div class="grid-2">
+          <label class="field"><span>Duration (min)</span><input type="number" id="f-duration" name="duration_min" min="0" max="1440" placeholder="auto"></label>
+          <label class="field"><span>Workout type</span>
+            <input list="type-list" id="f-type" name="workout_type" placeholder="Strength">
+            <datalist id="type-list">
+              <option value="Strength"><option value="Hypertrophy"><option value="Push"><option value="Pull">
+              <option value="Cardio"><option value="Functional"><option value="Mobility">
+            </datalist>
+          </label>
+        </div>
+        <label class="field">
+          <span>Energy level: <b id="energy-value">7</b>/10</span>
+          <input type="range" id="f-energy" name="energy" min="1" max="10" value="7">
+        </label>
+
+        <div class="field">
+          <span>Exercises</span>
+          <div id="exercise-list"></div>
+          <button type="button" class="btn ghost full" id="add-exercise"><i data-lucide="plus"></i> Add exercise</button>
+        </div>
+      </div>
+
+      <label class="field"><span>Notes</span><textarea id="f-notes" name="notes" rows="2" placeholder="How did it feel?"></textarea></label>
+
+      <p class="form-error" id="form-error" hidden></p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn danger" id="delete-session" hidden>Delete</button>
+        <button type="submit" class="btn primary" id="save-session"><i data-lucide="check"></i> Save workout</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>window.GYMPULSE = {today: "{{ today }}", muscles: {{ muscles|tojson }}, settings: {{ settings|tojson }}};</script>
+<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/workout.js') }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
