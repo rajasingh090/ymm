@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block page %}coach{% endblock %}
+{% block title %}AI Coach · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="card reveal glow">
+  <h2><i data-lucide="sparkles"></i> GymPulse AI Coach</h2>
+  <p class="muted small">
+    Layer 1 is a local Python analytics engine that computes honest statistics from your real records.
+    Layer 2 is an optional AI narrative.
+    Status: <b class="{{ 'accent' if ai_enabled else '' }}">{{ 'AI narrative enabled' if ai_enabled else 'AI disabled — local analytics only' }}</b>.
+  </p>
+  <button class="btn primary full" id="run-analysis"><i data-lucide="activity"></i> Analyse my progress</button>
+</section>
+
+<section id="ai-narrative" class="card reveal" hidden>
+  <h3>Coach narrative</h3>
+  <p id="ai-text"></p>
+  <p class="muted small" id="ai-source"></p>
+</section>
+
+<section id="insights" class="stack"></section>
+
+<section class="card reveal">
+  <h3>Honesty policy</h3>
+  <ul class="bullets">
+    <li>Statistics are computed only from logged sessions — nothing is invented.</li>
+    <li>Unrecorded days are never counted as missed days.</li>
+    <li>Attendance consistency does not prove muscle growth; log body measurements for physical progress.</li>
+    <li>Estimated 1RM values are explicitly labelled as estimates (Epley formula).</li>
+    <li>When AI is disabled the app never pretends a model was used.</li>
+  </ul>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/coach.js') }}" defer></script>
+{% endblock %}
