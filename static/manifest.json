@@ -1,0 +1,14 @@
+{
+  "name": "GymPulse AI",
+  "short_name": "GymPulse",
+  "description": "Personal gym attendance, muscle group and strength tracker with Indian calendar support.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f10",
+  "theme_color": "#0b0f10",
+  "icons": [
+    { "src": "/static/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
