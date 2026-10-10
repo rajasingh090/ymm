@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block page %}home{% endblock %}
+{% block title %}Dashboard · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="hero card reveal">
+  <p class="muted">{{ greeting }}, athlete</p>
+  <h2 class="hero-title">{{ gregorian_month }}</h2>
+  {% if hindu %}
+    <p class="accent small">Hindu lunar: {{ hindu.month }} ({{ hindu.system }}) · {{ hindu.paksha }} {{ hindu.tithi_name }} · Shaka {{ hindu.shaka_samvat }}</p>
+  {% else %}
+    <p class="muted small">Hindu calendar conversion is not configured — showing the Gregorian calendar only.</p>
+  {% endif %}
+  <div class="hero-actions">
+    <button class="btn primary" id="log-today"><i data-lucide="dumbbell"></i> Log Today's Workout</button>
+    <a class="btn ghost" href="/ai-coach"><i data-lucide="sparkles"></i> AI Coach</a>
+  </div>
+</section>
+
+<section class="stat-grid">
+  <div class="card stat reveal"><span class="label">Gym visits</span><b class="counter" data-value="{{ stats.total_gym_visits }}">0</b><span class="muted small">{{ stats.total_sessions }} sessions</span></div>
+  <div class="card stat reveal"><span class="label">This week</span><b class="counter" data-value="{{ stats.weekly_sessions }}">0</b><span class="muted small">goal {{ stats.weekly_goal }}</span></div>
+  <div class="card stat reveal"><span class="label">This month</span><b class="counter" data-value="{{ stats.monthly_sessions }}">0</b><span class="muted small">sessions</span></div>
+  <div class="card stat reveal"><span class="label">Total hours</span><b class="counter" data-value="{{ stats.total_hours }}" data-decimals="1">0</b><span class="muted small">avg {{ stats.avg_duration|int }} min</span></div>
+  <div class="card stat reveal"><span class="label">Attendance</span><b class="counter" data-value="{{ stats.attendance_pct }}" data-decimals="1" data-suffix="%">0</b><span class="muted small">went vs missed</span></div>
+  <div class="card stat reveal"><span class="label">Streak</span><b class="counter" data-value="{{ stats.current_streak }}">0</b><span class="muted small">best {{ stats.longest_streak }}</span></div>
+</section>
+
+<section class="card reveal">
+  <h3>Weekly goal</h3>
+  <div class="progress-bar"><span style="--pct: {{ stats.weekly_goal_pct }}%"></span></div>
+  <p class="muted small">{{ stats.weekly_sessions }} of {{ stats.weekly_goal }} sessions this week · {{ stats.avg_sessions_per_week }} avg/week all time</p>
+</section>
+
+<section class="card reveal">
+  <h3>Weekly activity (last 12 weeks)</h3>
+  <div class="chart-wrap"><canvas id="dash-weekly"></canvas></div>
+</section>
+
+<section class="card reveal">
+  <h3>Muscle group distribution (90 days)</h3>
+  <div class="chart-wrap"><canvas id="dash-muscles"></canvas></div>
+</section>
+
+<section class="card reveal">
+  <h3>Monthly attendance</h3>
+  <div class="chart-wrap"><canvas id="dash-monthly"></canvas></div>
+</section>
+
+<section class="card reveal">
+  <div class="row-between"><h3>Recent workouts</h3><a class="link" href="/history">All →</a></div>
+  <div class="list">
+    {% for s in recent %}
+    <button class="list-item" data-session="{{ s.id }}">
+      <div class="dot {{ s.status }}"></div>
+      <div class="grow">
+        <b>{{ s.date }}</b>
+        <span class="muted small">{{ s.muscles|join(' + ') if s.muscles else s.status|capitalize }}</span>
+      </div>
+      <span class="pill">{{ s.duration_min }}m</span>
+    </button>
+    {% else %}
+    <p class="muted">No workouts logged yet. Tap “Log Today's Workout” to begin — every statistic on this page is computed from real records only.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="card reveal">
+  <div class="row-between"><h3>Coach insight</h3><span class="pill {{ 'ok' if ai_enabled else '' }}">{{ 'AI enabled' if ai_enabled else 'Local analytics' }}</span></div>
+  <div id="dash-insight"><p class="muted small">Loading insight…</p></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+{% endblock %}
