@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block page %}history{% endblock %}
+{% block title %}History · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="card reveal">
+  <h2>Workout history</h2>
+  <label class="field"><span>Search</span>
+    <input type="search" id="h-search" placeholder="exercise, muscle, note, date…">
+  </label>
+  <div class="grid-2">
+    <label class="field"><span>Muscle</span>
+      <select id="h-muscle"><option value="">All</option>{% for m in muscles %}<option>{{ m }}</option>{% endfor %}</select>
+    </label>
+    <label class="field"><span>Status</span>
+      <select id="h-status"><option value="">All</option><option value="went">Went</option><option value="missed">Missed</option><option value="rest">Rest</option></select>
+    </label>
+  </div>
+  <div class="grid-2">
+    <label class="field"><span>Range</span>
+      <select id="h-range">
+        <option value="30d">Last 30 days</option><option value="90d">Last 90 days</option>
+        <option value="6m">Last 6 months</option><option value="12m">Last 12 months</option>
+        <option value="all" selected>All time</option><option value="custom">Custom</option>
+      </select>
+    </label>
+    <label class="field"><span>Min duration (min)</span><input type="number" id="h-duration" min="0" placeholder="0"></label>
+  </div>
+  <div class="grid-2" id="h-custom" hidden>
+    <label class="field"><span>From</span><input type="date" id="h-start"></label>
+    <label class="field"><span>To</span><input type="date" id="h-end"></label>
+  </div>
+  <p class="muted small" id="h-count"></p>
+</section>
+
+<section id="h-results" class="stack"></section>
+
+<section class="card reveal">
+  <h3>Yearly attendance heatmap</h3>
+  <div class="row-between">
+    <button class="icon-btn ghost" id="hm-prev" aria-label="Previous year"><i data-lucide="chevron-left"></i></button>
+    <b id="hm-year"></b>
+    <button class="icon-btn ghost" id="hm-next" aria-label="Next year"><i data-lucide="chevron-right"></i></button>
+  </div>
+  <div class="heatmap" id="heatmap"></div>
+  <p class="muted small">Each square is one day. Brighter = longer session.</p>
+</section>
+
+<section class="card reveal">
+  <h3>Personal records</h3>
+  <div id="records"></div>
+  <p class="muted small">Estimated 1RM uses the Epley formula and is clearly an estimate, not a measured maximum.</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}" defer></script>
+{% endblock %}
