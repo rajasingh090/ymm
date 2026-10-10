@@ -15,7 +15,7 @@ from __future__ import annotations
 APP_NAME = "GymPulse AI"
 
 # Paste the actual Render URL here after deployment.
-SELF_PING_URL = "https://YOUR-APP-NAME.onrender.com"
+SELF_PING_URL = "https://ymm-c2mt.onrender.com"
 
 # Self-ping configuration
 ENABLE_SELF_PING = True          # ignored if the URL above is still a placeholder
