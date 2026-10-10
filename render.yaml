@@ -1,29 +1,30 @@
+# Render blueprint for GymPulse AI
+# Deploy:  New + -> Blueprint -> pick this repository.
 services:
   - type: web
     name: gympulse-ai
-    runtime: node
+    runtime: python
     plan: free
-    buildCommand: npm install && npx drizzle-kit migrate && npm run build
-    startCommand: npm run start -- --hostname 0.0.0.0 --port $PORT
-    healthCheckPath: /api/health
+    region: oregon
+    rootDir: gympulse-ai
+    buildCommand: pip install -r requirements.txt
+    # Render injects $PORT - never hardcode the production port.
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 60
+    healthCheckPath: /health
+    autoDeploy: true
     envVars:
-      - key: NODE_VERSION
-        value: 22
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      # Optional: instead of editing DATABASE_URL in app.py you may connect the
+      # managed database below.  app.py reads os.environ["DATABASE_URL"] first
+      # and falls back to the value written in its CONFIGURATION section.
       - key: DATABASE_URL
         fromDatabase:
           name: gympulse-db
           property: connectionString
-      - key: GYMPULSE_ACCESS_PASSWORD
-        sync: false
-      - key: GYMPULSE_AUTH_SECRET
-        sync: false
-      - key: GYMPULSE_AI_API_KEY
-        sync: false
-      - key: GYMPULSE_AI_MODEL
-        value: gpt-4o-mini
 
 databases:
   - name: gympulse-db
     plan: free
-    databaseName: gympulse_ai
-    user: gympulse_ai
+    databaseName: gympulse
+    user: gympulse
